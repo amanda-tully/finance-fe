@@ -1,23 +1,36 @@
 import React from "react";
+import { CompanySearch } from "../../company";
+import { AddPortfolio } from "../Portfolio/AddPortfolio/AddPortfolio";
 
 interface Props {
-  companyName: string;
-  ticker: string;
-  price: number;
+  searchResult: CompanySearch;
+  id: string;
+  onPortfolioCreate: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
-export const Card: React.FC<Props> = ({ companyName, price, ticker }) => {
+export const Card: React.FC<Props> = ({
+  searchResult,
+  id,
+  onPortfolioCreate,
+}) => {
   return (
-    <div className="flex flex-col items-center justify-between w-full p-6 bg-slate-100 rounded-lg md:flex-row">
+    <div
+      key={id}
+      id={id}
+      className="flex flex-col items-center justify-between w-full p-6 bg-slate-100 rounded-lg md:flex-row"
+    >
       <h2 className="font-bold text-center text-veryDarkViolet md:text-left">
-        {companyName}({ticker})
+        {searchResult.name}({searchResult.symbol})
       </h2>
-      <p>${price}</p>
-
-      <p className="info">
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. At, quidem
-        excepturi?
+      <p className="text-veryDarkBlue">{searchResult.currency}</p>
+      <p className="font-bold text-veryDarkBlue">
+        {searchResult.exchangeShortName} - {searchResult.stockExchange}
       </p>
+
+      <AddPortfolio
+        onPortfolioCreate={onPortfolioCreate}
+        symbol={searchResult.symbol}
+      />
     </div>
   );
 };

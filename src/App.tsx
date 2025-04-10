@@ -1,20 +1,24 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useCallback, useState } from "react";
 import { CardList } from "./Components/CardList/CardList";
 import { Hero } from "./Components/Hero/Hero";
 import { Search } from "./Components/Search/Search";
 import { CompanySearch } from "./company";
 import { searchCompanies } from "./api";
+import { ListPortfolio } from "./Components/Portfolio/ListPortfolio/ListPortfolio";
+import { PortfolioGet } from "./Models/Portfolio";
 
 function App() {
   const [search, setSearch] = useState<string>("");
+  const [portfolioValues, setPortfolioValues] = useState<PortfolioGet[]>([]);
   const [searchResults, setSearchResults] = useState<CompanySearch[]>([]);
   const [serverError, setServerError] = useState<string>("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     setSearch(e.target.value);
   };
 
-  const handleSearchSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSearchSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const result = await searchCompanies(search);
@@ -30,12 +34,44 @@ function App() {
     setSearch("");
   };
 
+  const onPortfolioCreate = useCallback(
+    (e: any) => {
+      e.preventDefault();
+      const exists = portfolioValues.find(
+        (value) => value === e.target[0].value
+      );
+
+      if (exists) {
+        return;
+      }
+
+      const updatedPortfolioValues = [...portfolioValues, e.target[0].value];
+      setPortfolioValues(updatedPortfolioValues);
+    },
+    [portfolioValues]
+  );
+
+  const onPortfolioDelete = useCallback(
+    (e: any) => {
+      e.preventDefault();
+
+      const removed = portfolioValues.filter((value) => {
+        return value !== e.target[0].value;
+      });
+
+      setPortfolioValues(removed);
+    },
+    [portfolioValues]
+  );
+
+  console.log("portfolioValues", portfolioValues);
+
   return (
     <div className="App">
       <Hero />
       <Search
         handleChange={handleChange}
-        onSearchSubmit={handleSearchSubmit}
+        onSearchSubmit={onSearchSubmit}
         search={search}
       />
       {serverError && (
@@ -44,7 +80,15 @@ function App() {
         </div>
       )}
 
-      <CardList />
+      <ListPortfolio
+        onPortfolioDelete={onPortfolioDelete}
+        portfolioValues={portfolioValues}
+      />
+
+      <CardList
+        searchResults={searchResults}
+        onPortfolioCreate={onPortfolioCreate}
+      />
     </div>
   );
 }
