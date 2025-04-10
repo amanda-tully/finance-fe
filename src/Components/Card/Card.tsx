@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { CompanySearch } from "../../company";
 import { AddPortfolio } from "../Portfolio/AddPortfolio/AddPortfolio";
 
@@ -19,9 +20,12 @@ export const Card: React.FC<Props> = ({
       id={id}
       className="flex flex-col items-center justify-between w-full p-6 bg-slate-100 rounded-lg md:flex-row"
     >
-      <h2 className="font-bold text-center text-veryDarkViolet md:text-left">
-        {searchResult.name}({searchResult.symbol})
-      </h2>
+      <Link
+        to={`/company/${searchResult.symbol}/company-profile`}
+        className="font-bold text-center text-veryDarkViolet md:text-left"
+      >
+        {searchResult.name} ({searchResult.symbol})
+      </Link>
       <p className="text-veryDarkBlue">{searchResult.currency}</p>
       <p className="font-bold text-veryDarkBlue">
         {searchResult.exchangeShortName} - {searchResult.stockExchange}
