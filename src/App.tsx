@@ -1,24 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ChangeEvent, useState } from "react";
+import { CardList } from "./Components/CardList/CardList";
+import { Hero } from "./Components/Hero/Hero";
+import { Search } from "./Components/Search/Search";
+import { CompanySearch } from "./company";
+import { searchCompanies } from "./api";
 
 function App() {
+  const [search, setSearch] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<CompanySearch[]>([]);
+  const [serverError, setServerError] = useState<string>("");
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  const handleSearchSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const result = await searchCompanies(search);
+
+    if (typeof result === "string") {
+      setServerError(result);
+      setSearchResults([]);
+    } else if (Array.isArray(result)) {
+      setSearchResults(result);
+      setServerError("");
+    }
+
+    setSearch("");
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Hero />
+      <Search
+        handleChange={handleChange}
+        onSearchSubmit={handleSearchSubmit}
+        search={search}
+      />
+      {serverError && (
+        <div className="text-red-500 text-center">
+          <p>{serverError}</p>
+        </div>
+      )}
+
+      <CardList />
     </div>
   );
 }
