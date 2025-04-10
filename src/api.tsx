@@ -39,7 +39,9 @@ export const searchCompanies = async (query: string) => {
 export const getCompanyProfile = async (query: string) => {
   try {
     const data = await axios.get<CompanyProfile[]>(
-      `profile/${query}?apikey=${process.env.REACT_APP_API_KEY}`
+      `profile?symbol=${query.toUpperCase()}&apikey=${
+        process.env.REACT_APP_API_KEY
+      }`
     );
     return data;
   } catch (error: any) {
@@ -47,21 +49,21 @@ export const getCompanyProfile = async (query: string) => {
   }
 };
 
-// export const getKeyMetrics = async (query: string) => {
-//   try {
-//     const data = await axios.get<CompanyKeyMetrics[]>(
-//       `https://financialmodelingprep.com/api/v3/key-metrics-ttm/${query}?limit=40&apikey=${process.env.REACT_APP_API_KEY}`
-//     );
-//     return data;
-//   } catch (error: any) {
-//     if (axios.isAxiosError(error)) {
-//       console.log("error message: ", error.message);
-//     } else {
-//       console.log("Unexpected error: ", error);
-//       return "Unexpected error";
-//     }
-//   }
-// };
+export const getKeyMetrics = async (query: string) => {
+  try {
+    const data = await axios.get<CompanyKeyMetrics[]>(
+      `key-metrics?symbol=${query}?limit=40&apikey=${process.env.REACT_APP_API_KEY}`
+    );
+    return data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.log("error message: ", error.message);
+    } else {
+      console.log("Unexpected error: ", error);
+      return "Unexpected error";
+    }
+  }
+};
 
 // export const getIncomeStatement = async (query: string) => {
 //   try {
